@@ -45,8 +45,12 @@ internal class Program
         }
         else
             ConsoleHelper.SetWindowPosition(conHwnd, 1, 1, winSize.width, winSize.height);
+        
+        if (args.Length > 1)
+            ConsoleHelper.ShowWindow(conHwnd, ConsoleHelper.SW_MAXIMIZE);
         #endregion
 
+        // Blocking call.
         DrawCube();
     }
 
@@ -104,8 +108,8 @@ internal class Program
             }
 
             // Rotate matrix by some amount.
-            A += 0.04f;
-            B += 0.04f;
+            A += 0.05f;
+            B += 0.05f;
             C += 0.01f;
 
             //if (A >= 360) { A = 0; }
@@ -113,6 +117,10 @@ internal class Program
             //if (C >= 360) { C = 0; }
 
             Thread.Sleep(1);
+
+            // The cursor may become visible again if the user has resized the console window.
+            if (Console.CursorVisible)
+                Console.CursorVisible = false;
         }
     }
 
