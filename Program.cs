@@ -1,9 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Threading;
-
-namespace ConsoleCube;
+﻿namespace ConsoleCube;
 
 /// <summary>
 /// Inspiration from the following example:
@@ -46,7 +41,7 @@ internal class Program
         else
             ConsoleHelper.SetWindowPosition(conHwnd, 1, 1, winSize.width, winSize.height);
         
-        if (args.Length > 1)
+        if (args.Length > 0)
             ConsoleHelper.ShowWindow(conHwnd, ConsoleHelper.SW_MAXIMIZE);
         #endregion
 
@@ -82,9 +77,9 @@ internal class Program
                     // 1st face
                     calculateForSurface(cubeX, cubeY, -cubeWidth, '.');
                     // 2nd face
-                    calculateForSurface(cubeWidth, cubeY, cubeX, '|');
+                    calculateForSurface(cubeWidth, cubeY, cubeX, '~');
                     // 3rd face
-                    calculateForSurface(-cubeWidth, cubeY, -cubeX, '~');
+                    calculateForSurface(-cubeWidth, cubeY, -cubeX, '"');
                     // 4th face
                     calculateForSurface(-cubeX, cubeY, cubeWidth, ':');
                     // 5th face
@@ -110,7 +105,7 @@ internal class Program
             // Rotate matrix by some amount.
             A += 0.05f;
             B += 0.05f;
-            C += 0.01f;
+            C += 0.001f;
 
             //if (A >= 360) { A = 0; }
             //if (B >= 360) { B = 0; }
@@ -119,7 +114,7 @@ internal class Program
             Thread.Sleep(1);
 
             // The cursor may become visible again if the user has resized the console window.
-            if (Console.CursorVisible)
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT && Console.CursorVisible)
                 Console.CursorVisible = false;
         }
     }

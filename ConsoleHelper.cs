@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 
 namespace ConsoleCube;
 
-// <summary>
-/// Here's a bunch of juicy extras for all of your console desires.
+/// <summary>
+/// Here's a bunch of juicy extras for all of your Window's console desires.
 /// </summary>
 public static class ConsoleHelper
 {
