@@ -103,8 +103,8 @@ internal class Program
             }
 
             // Rotate matrix by some amount.
-            A += 0.05f;
-            B += 0.05f;
+            A += 0.06f;
+            B += 0.06f;
             C += 0.001f;
 
             //if (A >= 360) { A = 0; }

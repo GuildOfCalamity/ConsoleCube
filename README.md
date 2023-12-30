@@ -2,6 +2,11 @@
 
 ![Sample](./ScreenShot.jpg)
 
+This example uses the console window to attempt to draw and animate a 3D object with ASCII characters.
+However, in terms of framerate, the Console was never meant to be used as a GDI.
+With the advent of Direct2D the API calls still work at their lowest level on the GDI.
+This should not be used as an approach to making a game engine; it's for entertainment purposes only.
+
 - From Wikipedia
 ![Research](./BasicRotations.jpg)
 
