@@ -16,16 +16,16 @@ internal class Program
     static float x, y, z, ooz, xp, yp;
     static int idx;
     static float incrementSpeed = 0.6f;
-    static float cubeWidth = 20;
+    static float cubeWidth = 22;
     static int width = 70;
     static int height = 30;
     static float[] zBuffer = new float[width * height];
     static int[] buffer = new int[width * height];
     static int backgroundASCIICode = ' ';
-    static float A = 0.0f;
-    static float B = 0.0f;
-    static float C = 0.0f;
-    static int distanceFromCam = 120;
+    static float A = 0.001f;
+    static float B = 0.001f;
+    static float C = 0.001f;
+    static int distanceFromCam = 100;
     static float K1 = 30;
     static IntPtr conHwnd = IntPtr.Zero;
     #endregion
@@ -41,7 +41,7 @@ internal class Program
         {
             var x = (dims.width - (winSize.width + 10)) / 2;
             var y = (dims.height - (winSize.height + 10)) / 3;
-            ConsoleHelper.SetWindowPosition(conHwnd, x, y, winSize.width, winSize.height + (int)((float)winSize.height * 0.22f));
+            ConsoleHelper.SetWindowPosition(conHwnd, x, y, winSize.width, winSize.height + (int)((float)winSize.height * 0.2f));
         }
         else
             ConsoleHelper.SetWindowPosition(conHwnd, 1, 1, winSize.width, winSize.height);
@@ -64,7 +64,8 @@ internal class Program
         Console.CursorVisible = false;
         while (true)
         {
-            //void* memset(void* ptr, int x, size_t n);
+            // In C, "void* memset(void* ptr, int x, size_t n)" will be replaced by "Array.Fill(int[] array, int value)".
+
             // Blank the background.
             Array.Fill(buffer, backgroundASCIICode);
             // Reset depth buffer.
@@ -107,9 +108,15 @@ internal class Program
             B += 0.04f;
             C += 0.01f;
 
+            //if (A >= 360) { A = 0; }
+            //if (B >= 360) { B = 0; }
+            //if (C >= 360) { C = 0; }
+
             Thread.Sleep(1);
         }
     }
+
+    #region [Math Functions]
     static float calculateX(int i, int j, int k)
     {
         return j * MathF.Sin(A) * MathF.Sin(B) * MathF.Cos(C) - k * MathF.Cos(A) * MathF.Sin(B) * MathF.Cos(C) +
@@ -117,7 +124,7 @@ internal class Program
     }
     static float calculateY(int i, int j, int k)
     {
-        return j * MathF.Sin(A) * MathF.Cos(C) +k * MathF.Sin(A) * MathF.Cos(C) -
+        return j * MathF.Cos(A) * MathF.Cos(C) + k * MathF.Sin(A) * MathF.Cos(C) -
                j * MathF.Sin(A) * MathF.Sin(B) * MathF.Sin(C) + k * MathF.Cos(A) * MathF.Sin(B) * MathF.Sin(C) -
                i * MathF.Cos(B) * MathF.Sin(C);
     }
@@ -143,4 +150,5 @@ internal class Program
             }
         }
     }
+    #endregion
 }
