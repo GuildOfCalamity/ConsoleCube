@@ -1,4 +1,6 @@
-﻿namespace ConsoleCube;
+﻿using System.Diagnostics;
+
+namespace ConsoleCube;
 
 /// <summary>
 /// Inspiration from the following example:
@@ -23,10 +25,13 @@ internal class Program
     static int distanceFromCam = 100;
     static float K1 = 30;
     static IntPtr conHwnd = IntPtr.Zero;
+    static ValueStopwatch vsw = ValueStopwatch.StartNew();
     #endregion
 
     static void Main(string[] args)
     {
+        vsw = ValueStopwatch.StartNew();
+
         #region [Center Console Window]
         conHwnd = ConsoleHelper.GetForegroundWindow();
         var winSize = ConsoleHelper.GetWindowSize(conHwnd);
@@ -36,7 +41,7 @@ internal class Program
         {
             var x = (dims.width - (winSize.width + 10)) / 2;
             var y = (dims.height - (winSize.height + 10)) / 3;
-            ConsoleHelper.SetWindowPosition(conHwnd, x, y, winSize.width, winSize.height + (int)((float)winSize.height * 0.2f));
+            ConsoleHelper.SetWindowPosition(conHwnd, x, y - 20, winSize.width, winSize.height + (int)((float)winSize.height * 0.2f));
         }
         else
             ConsoleHelper.SetWindowPosition(conHwnd, 1, 1, winSize.width, winSize.height);
@@ -45,6 +50,11 @@ internal class Program
             ConsoleHelper.ShowWindow(conHwnd, ConsoleHelper.SW_MAXIMIZE);
         #endregion
 
+        Console.WriteLine($"Init ran for {vsw.GetElapsedTime().ToReadableString()}");
+#if WINDOWS
+        //if (Environment.OSVersion.Platform == PlatformID.Win32NT && Console.CursorVisible)
+            Console.CursorVisible = false;
+#endif
         // Blocking call.
         DrawCube();
     }
@@ -54,15 +64,19 @@ internal class Program
     /// </summary>
     static void DrawCube()
     {
+        int frameCount = 0;
+
         //printf("\x1b[2J");
         // In C, printf("\x1b[2J") is an escape sequence using ASCII control characters.
         // Specifically, \x1b represents the escape character (\e in octal notation),
         // [ indicates the start of an escape sequence, 2 is a parameter indicating a 
         // specific action, and J is the command to clear the entire terminal screen.
         Console.Clear();
-        Console.CursorVisible = false;
+        
         while (true)
         {
+            vsw = ValueStopwatch.StartNew();
+
             // In C, "void* memset(void* ptr, int x, size_t n)" will be replaced by "Array.Fill(int[] array, int value)".
 
             // Blank the background.
@@ -113,9 +127,16 @@ internal class Program
 
             Thread.Sleep(1);
 
-            // The cursor may become visible again if the user has resized the console window.
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT && Console.CursorVisible)
-                Console.CursorVisible = false;
+            if (++frameCount % 10 == 0)
+            {
+#if WINDOWS
+                // The cursor may become visible again if the user has resized the console window.
+                //if (Environment.OSVersion.Platform == PlatformID.Win32NT && Console.CursorVisible)
+                    Console.CursorVisible = false;
+#endif
+                //Console.Title = $"Milliseconds per frame: {vsw.GetElapsedTime().Milliseconds}";
+                Console.Title = $"{1000 / vsw.GetElapsedTime().Milliseconds} FPS";
+            }
         }
     }
 
@@ -146,6 +167,7 @@ internal class Program
         idx = (int)(xp + yp * width);
         if (idx >= 0 && idx < width * height)
         {
+            // Update the depth and draw buffers.
             if (ooz > zBuffer[idx])
             {
                 zBuffer[idx] = ooz;
